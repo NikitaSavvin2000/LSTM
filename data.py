@@ -1,14 +1,17 @@
 import pandas as pd
-import numpy as np
 
 
-df_it = pd.read_csv(r'data/time_series_60min_singleindex_filtered.csv', sep=',')
+df_it_draft = pd.read_csv(r'data/time_series_60min_singleindex_filtered.csv', sep=';')
 
-#df_it = df_it.to_datetime['cet_cest_timestamp']
+# Convert column to datetime format and remove timezone offset
+def convert_df(df):
+    print('Convert type process ...')
+    df['cet_cest_timestamp'] = pd.to_datetime(
+    df['cet_cest_timestamp'],
+    format='%Y-%m-%d %H:%M:%S%z',
+    utc=True).dt.tz_convert(None)
+    df['IT_load_actual_entsoe_transparency'] = df['IT_load_actual_entsoe_transparency'].astype(float)
+    print('Successful')
+    return df
 
-df_it['cet_cest_timestamp'] = pd.to_datetime(df_it['cet_cest_timestamp'])
-
-# Convert the 'IT_load_actual_entsoe_transparency' column to float format
-df_it['IT_load_actual_entsoe_transparency'] = df_it['IT_load_actual_entsoe_transparency'].astype(float)
-
-print(df_it.columns)
+df_it = convert_df(df_it_draft)
